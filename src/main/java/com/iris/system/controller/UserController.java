@@ -1,8 +1,10 @@
 package com.iris.system.controller;
 
 
+import com.iris.system.enums.Status;
 import com.iris.system.request.ActivateUserRequest;
 import com.iris.system.request.RegisterUserRequest;
+import com.iris.system.response.CommonResponse;
 import com.iris.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +22,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register") // deserialize: json/text/xml -> object in memory
-    public void register(@RequestBody RegisterUserRequest registerUserRequest) throws Exception{
+    public CommonResponse register(@RequestBody RegisterUserRequest registerUserRequest) throws Exception{
         // validate the input
         this.userService.register(registerUserRequest.getUsername(),
                 registerUserRequest.getPassword(),
@@ -30,14 +32,16 @@ public class UserController {
                 registerUserRequest.getAddress(),
                 registerUserRequest.getGender());
 
-        // store a user into the user table
+        // throw no exception
+        return new CommonResponse(Status.OK);
     }
 
     // activate the user after clicking on the email
     @PostMapping("/activate")
-    public void activate(@RequestBody ActivateUserRequest activateUserRequest) throws Exception{
+    public CommonResponse activate(@RequestBody ActivateUserRequest activateUserRequest) throws Exception{
         this.userService.activate(activateUserRequest.getUsername(),
                                     activateUserRequest.getValidationCode());
+        return new CommonResponse(Status.OK);
 
     }
 

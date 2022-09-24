@@ -3,6 +3,8 @@ package com.iris.system.service;
 import com.iris.system.DAO.UserDAO;
 import com.iris.system.DAO.UserValidationCodeDAO;
 import com.iris.system.enums.Gender;
+import com.iris.system.enums.Status;
+import com.iris.system.exception.MessageServiceException;
 import com.iris.system.model.User;
 import com.iris.system.model.UserValidationCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +36,22 @@ public class UserService {
                          String email,
                          String address,
                          Gender gender) throws Exception {
-        //validations
+        //validations: switch
         if (!repeatPassword.equals(password)) {
-            throw new Exception();
+            throw new MessageServiceException(Status.PASSWORDS_NOT_MATCHED);
         }
         if (password.length() < 10) {
-            throw new Exception();
+            throw new MessageServiceException(Status.PASSWORD_TOO_SHORT);
         }
 
         // check if username already exists in the database
         if (this.userDAO.selectByUsername(username).size() >= 1) {
-            throw new Exception();
+            throw new MessageServiceException(Status.USER_ALREADY_REGISTERED);
         }
 
         // check email
         if (this.userDAO.selectByEmail(email).size() >= -1) {
-            throw new Exception();
+            throw new MessageServiceException(Status.USER_NO_EMAIL);
         }
 
         // var detects automatically the datatype of a variable based on the surrounding context
@@ -90,12 +92,19 @@ public class UserService {
 
         // get the userID by username
         var users = this.userDAO.selectByUsername(username); // return a list
+        if (users == null || users.size() == 0) {
+            throw new MessageServiceException(Status.USER_NOT_EXIST);
+        }
+
         var user = users.get(0);
         var inputValidationCode   = this.userValidationCodeDAO.selectRecentValidationCodeByUserID(user.getId());
+        if (inputValidationCode == null) {
+            throw new MessageServiceException(Status.UNKNOWN);
+        }
 
         // check if the codes are the same. equals check the value
         if (!validationCode.equals(inputValidationCode.getValidationCode())) {
-            throw new Exception("wrong validation code");
+            throw new MessageServiceException(Status.VALIDATION_FAILED);
         }
 
         int userId = user.getId();
