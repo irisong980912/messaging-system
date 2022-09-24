@@ -5,9 +5,9 @@ import lombok.Data;
 
 
 /*
-Lombook automatically add functions to the class
-@EqualsAndHashCode, @Getter, @Setter, @RequiredArgsConstructor
-Can overrride the method
+    Lombook automatically add functions to the class
+    @EqualsAndHashCode, @Getter, @Setter, @RequiredArgsConstructor
+    Can overrride the method
 */
 
 @Data
