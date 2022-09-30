@@ -1,7 +1,12 @@
 package com.iris.system.DAO;
 
 import com.iris.system.model.User;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,10 +45,11 @@ import java.util.List;
 @Repository
 public interface UserDAO {
 
-    // User.getUsername()
+    //user.getUsername()
     @Insert("INSERT INTO `user` (username, nickname, password, register_time, gender, email, address, is_valid) " +
             "VALUES (#{username}, #{nickname}, #{password}, #{registerTime}, #{gender}, #{email}, #{address}, " +
             "#{isValid})")
+    @Options(useGeneratedKeys = true, keyColumn = "id", keyProperty = "id")
     void insert(User user);
 
     @Select("select * from user where username=#{username}")
@@ -52,6 +58,6 @@ public interface UserDAO {
     @Select("select * from user where email=#{email}")
     List<User> selectByEmail(@Param("email") String email);
 
-    @Update("UPDATE user SET is_valid = 1 where id = #{userId}")
+    @Update("UPDATE user SET is_valid = 1 WHERE id = #{userId}")
     void updateToValid(@Param("userId") int userId);
 }

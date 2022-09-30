@@ -5,6 +5,7 @@ import com.iris.system.enums.Status;
 // handles system exceptions?
 // throws exception and halt the process
 // commonResponse is just telling a message
+// a customized exception that must be handled -> try and catch
 public class MessageServiceException extends Exception{
 
     private Status status;

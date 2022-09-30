@@ -2,6 +2,7 @@ package com.iris.system.controller;
 
 
 import com.iris.system.enums.Status;
+import com.iris.system.exception.MessageServiceException;
 import com.iris.system.request.ActivateUserRequest;
 import com.iris.system.request.RegisterUserRequest;
 import com.iris.system.response.CommonResponse;
@@ -17,13 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
 
-    // dependency injection for testability
+    // dependency injection for testability.
+    // no new. Decoupling
     @Autowired
     private UserService userService;
 
     @PostMapping("/register") // deserialize: json/text/xml -> object in memory
-    public CommonResponse register(@RequestBody RegisterUserRequest registerUserRequest) throws Exception{
+    public CommonResponse register(@RequestBody RegisterUserRequest registerUserRequest) throws Exception {
         // validate the input
+        // because it calls register, so must handle the exception threw by register.
+        // but we don't see "throw catch" here. Why? because it is handled by "exception handlers"
         this.userService.register(registerUserRequest.getUsername(),
                 registerUserRequest.getPassword(),
                 registerUserRequest.getRepeatPassword(),
@@ -38,9 +42,9 @@ public class UserController {
 
     // activate the user after clicking on the email
     @PostMapping("/activate")
-    public CommonResponse activate(@RequestBody ActivateUserRequest activateUserRequest) throws Exception{
+    public CommonResponse activate(@RequestBody ActivateUserRequest activateUserRequest) throws Exception {
         this.userService.activate(activateUserRequest.getUsername(),
-                                    activateUserRequest.getValidationCode());
+                activateUserRequest.getValidationCode());
         return new CommonResponse(Status.OK);
 
     }
@@ -76,4 +80,3 @@ public class UserController {
     3. injector that creates a service instance and inject to client (@Autowired)
  */
 
-// todo: read SOLID principle (dependency injection)

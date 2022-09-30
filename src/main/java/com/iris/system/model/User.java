@@ -44,17 +44,17 @@ import java.util.Date;
 @Builder
 @Value
 public class User {
-    private int id;
-    private String username;
-    private String nickname;
-    private String password;
-    private String loginToken;
-    private Date registerTime;
-    private Date lastLoginTime;
-    private Gender gender;
-    private String email;
-    private String address;
-    private Boolean isValid;
+    int id;
+    String username;
+    String nickname;
+    String password;
+    String loginToken;
+    Date registerTime;
+    Date lastLoginTime;
+    Gender gender;
+    String email;
+    String address;
+    Boolean isValid;
 
     /*
     public static class UserBuilder

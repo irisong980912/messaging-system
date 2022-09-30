@@ -5,7 +5,7 @@ package com.iris.system.enums;
 public enum Status {
 
     // define the enum constants
-    OK(1000, "successful"),
+    OK(1000, "Successful."),
     PASSWORDS_NOT_MATCHED(1001, "Passwords are not matched."),
     PASSWORD_TOO_SHORT(1002, "Passwords is too short."),
     USER_ALREADY_REGISTERED(1003, "User is already registered."),

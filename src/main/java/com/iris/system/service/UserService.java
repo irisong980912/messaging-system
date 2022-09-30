@@ -29,6 +29,7 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
+    // this method throws messageServiceException. Whoever calls it, must habdle the exception
     public void register(String username,
                          String password,
                          String repeatPassword,
@@ -43,24 +44,26 @@ public class UserService {
         if (password.length() < 10) {
             throw new MessageServiceException(Status.PASSWORD_TOO_SHORT);
         }
-
+//
         // check if username already exists in the database
         if (this.userDAO.selectByUsername(username).size() >= 1) {
             throw new MessageServiceException(Status.USER_ALREADY_REGISTERED);
         }
-
-        // check email
-        if (this.userDAO.selectByEmail(email).size() >= -1) {
+//
+//        // check email
+        if (this.userDAO.selectByEmail(email).size() >= 1) {
             throw new MessageServiceException(Status.USER_NO_EMAIL);
         }
+//
 
         // var detects automatically the datatype of a variable based on the surrounding context
         // can be used as a local instance within a method, but cannot be used as a global variable
         var user = User.builder()
                 .username(username)
-                .password(DigestUtils.md5Hex(password)) // secure the password
+                .password(password)
                 .nickname(nickname)
                 .email(email)
+                .address(address)
                 .gender(gender)
                 .registerTime(new Date())
                 .isValid(false)
@@ -73,22 +76,23 @@ public class UserService {
 
         //1. generate a validation code and store
         // need to get the user ID
-        String validationCode  = RandomStringUtils.randomAlphanumeric(6);
+        String validationCode = RandomStringUtils.randomNumeric(6);
         var userValidationCode = UserValidationCode.builder()
+                .userId(user.getId())
                 .validationCode(validationCode)
-                .userID(user.getId())
                 .build();
+
 
         this.userValidationCodeDAO.insert(userValidationCode);
 
         //2. send an email with the validation code to `email`
-        this.emailService.sendEmail(user.getEmail(), validationCode);
+//        this.emailService.sendEmail(user.getEmail(), validationCode);
 
         // and then activate the user
     }
 
     //3. send a request to another API /users/activate {username: "", validationCode: ""}
-    public void activate(String username, String validationCode) throws Exception{
+    public void activate(String username, String validationCode) throws MessageServiceException{
 
         // get the userID by username
         var users = this.userDAO.selectByUsername(username); // return a list
@@ -97,23 +101,22 @@ public class UserService {
         }
 
         var user = users.get(0);
-        var inputValidationCode   = this.userValidationCodeDAO.selectRecentValidationCodeByUserID(user.getId());
-        if (inputValidationCode == null) {
+
+        var userValidationCode = this.userValidationCodeDAO.selectOneByUserId(user.getId());
+        if (userValidationCode == null) {
             throw new MessageServiceException(Status.UNKNOWN);
         }
 
-        // check if the codes are the same. equals check the value
-        if (!validationCode.equals(inputValidationCode.getValidationCode())) {
+        if (!validationCode.equals(userValidationCode.getValidationCode())) {
             throw new MessageServiceException(Status.VALIDATION_FAILED);
         }
 
-        int userId = user.getId();
-        // if validation code is correct, then set the user field isValid to true
-        this.userDAO.updateToValid(userId);
-        // delete the validation code since it is used
-        this.userValidationCodeDAO.delete(userId);
+        this.userDAO.updateToValid(user.getId());
+        this.userValidationCodeDAO.delete(userValidationCode.getId());
+
 
     }
+
 }
 
 
