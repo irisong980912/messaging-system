@@ -25,6 +25,12 @@ public interface TestUserDAO {
     @Select("SELECT * FROM `user` WHERE username=#{username}")
     List<User> selectByUsername(@Param("username") String username);
 
+    @Select("select * from user where email=#{email}")
+    List<User> selectByEmail(@Param("email") String email);
+
+    @Select("DELETE FROM `user` WHERE username=#{username}")
+    List<User> deleteByUsername(@Param("username") String username);
+
     @Delete("DELETE FROM user")
     void deleteAll();
 }

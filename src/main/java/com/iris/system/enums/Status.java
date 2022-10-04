@@ -9,7 +9,7 @@ public enum Status {
     PASSWORDS_NOT_MATCHED(1001, "Passwords are not matched."),
     PASSWORD_TOO_SHORT(1002, "Passwords is too short."),
     USER_ALREADY_REGISTERED(1003, "User is already registered."),
-    USER_NO_EMAIL(1004, "User has no email."),
+    EMAIL_ALREADY_REGISTERED(1004, "This email is already registered."),
     USER_NOT_EXIST(1005, "User doesn't exist."),
 
     UNKNOWN(1006, "Unknown error."),

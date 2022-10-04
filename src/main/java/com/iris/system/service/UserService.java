@@ -44,17 +44,17 @@ public class UserService {
         if (password.length() < 10) {
             throw new MessageServiceException(Status.PASSWORD_TOO_SHORT);
         }
-//
+
         // check if username already exists in the database
         if (this.userDAO.selectByUsername(username).size() >= 1) {
             throw new MessageServiceException(Status.USER_ALREADY_REGISTERED);
         }
-//
+
 //        // check email
         if (this.userDAO.selectByEmail(email).size() >= 1) {
-            throw new MessageServiceException(Status.USER_NO_EMAIL);
+            throw new MessageServiceException(Status.EMAIL_ALREADY_REGISTERED);
         }
-//
+
 
         // var detects automatically the datatype of a variable based on the surrounding context
         // can be used as a local instance within a method, but cannot be used as a global variable
@@ -111,9 +111,8 @@ public class UserService {
             throw new MessageServiceException(Status.VALIDATION_FAILED);
         }
 
-        this.userDAO.updateToValid(user.getId());
         this.userValidationCodeDAO.delete(userValidationCode.getId());
-
+        this.userDAO.updateToValid(user.getId());
 
     }
 
