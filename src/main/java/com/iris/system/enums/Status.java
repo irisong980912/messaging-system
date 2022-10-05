@@ -12,7 +12,7 @@ public enum Status {
     EMAIL_ALREADY_REGISTERED(1004, "This email is already registered."),
     USER_NOT_EXIST(1005, "User doesn't exist."),
 
-    UNKNOWN(1006, "Unknown error."),
+    INTERNAL_SERVICE_ERROR(1006, "Internal service error."),
 
     VALIDATION_FAILED(1007, "Validation code does not match.");
 

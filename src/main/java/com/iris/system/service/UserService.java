@@ -104,7 +104,7 @@ public class UserService {
 
         var userValidationCode = this.userValidationCodeDAO.selectOneByUserId(user.getId());
         if (userValidationCode == null) {
-            throw new MessageServiceException(Status.UNKNOWN);
+            throw new MessageServiceException(Status.INTERNAL_SERVICE_ERROR);
         }
 
         if (!validationCode.equals(userValidationCode.getValidationCode())) {

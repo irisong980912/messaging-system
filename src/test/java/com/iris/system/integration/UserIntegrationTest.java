@@ -313,7 +313,7 @@ public class UserIntegrationTest {
     }
 
     @Test
-    public void testActivate_unknownError_returnBadRequest() throws Exception {
+    public void testActivate_internalServiceError_returnBadRequest() throws Exception {
 
         User user = User.builder()
                 .username("Stephen12")
@@ -339,7 +339,7 @@ public class UserIntegrationTest {
                 .andExpect(status().isBadRequest()) // HTTP status == 400
                 .andExpect(header().string("Content-Type", "application/json")) // Content-Type = ?
                 .andExpect(jsonPath("$.code").value(1006))
-                .andExpect(jsonPath("$.message").value("Unknown error."));
+                .andExpect(jsonPath("$.message").value("Internal service error."));
 
 
         var invalidCode = this.testUserValidationCodeDAO.selectOneByUserId(user.getId());
