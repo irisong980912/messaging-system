@@ -13,6 +13,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Date;
+import java.util.Random;
 
 
 /*
@@ -114,6 +115,26 @@ public class UserService {
         this.userValidationCodeDAO.delete(userValidationCode.getId());
         this.userDAO.updateToValid(user.getId());
 
+    }
+
+    // identification: username or email
+    public String login(String identification, String password) throws Exception {
+        // validate
+        User registeredUser = null;
+        var registeredUsers = this.userDAO.selectByUsername(identification);
+        if (registeredUsers != null && registeredUsers.size() >= 1) {
+            registeredUser = registeredUsers.get(0);
+        } else {
+            throw new MessageServiceException(Status.USER_NOT_EXIST);
+        }
+
+        if (password.equals(registeredUser.getPassword())) {
+            String loginToken = RandomStringUtils.randomAlphanumeric(64);
+            this.userDAO.login(registeredUser.getId(), loginToken, new Date());
+            return loginToken;
+        } else {
+            throw new MessageServiceException(Status.PASSWORDS_NOT_MATCHED);
+        }
     }
 
 }

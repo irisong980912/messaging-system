@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -60,4 +61,7 @@ public interface UserDAO {
 
     @Update("UPDATE user SET is_valid = 1 WHERE id = #{userId}")
     void updateToValid(@Param("userId") int userId);
+
+    @Update("UPDATE user SET login_token = #{loginToken}, last_login_time = #{lastLoginTime} WHERE id = #{userId}")
+    void login(@Param("userId") int userId, @Param("loginToken") String loginToken, @Param("lastLoginTime") Date lastLoginTime);
 }

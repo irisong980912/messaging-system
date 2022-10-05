@@ -1,9 +1,9 @@
 package com.iris.system.response;
 
 import com.iris.system.enums.Status;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 public class CommonResponse {
 
     int code;

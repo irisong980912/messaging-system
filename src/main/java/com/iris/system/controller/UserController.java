@@ -5,7 +5,9 @@ import com.iris.system.enums.Status;
 import com.iris.system.exception.MessageServiceException;
 import com.iris.system.request.ActivateUserRequest;
 import com.iris.system.request.RegisterUserRequest;
+import com.iris.system.request.UserLoginRequest;
 import com.iris.system.response.CommonResponse;
+import com.iris.system.response.UserLoginResponse;
 import com.iris.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +50,22 @@ public class UserController {
         return new CommonResponse(Status.OK);
 
     }
+
+    @PostMapping("/login")
+    public UserLoginResponse login(@RequestBody UserLoginRequest userLoginRequest) throws Exception {
+        var loginToken = this.userService.login(userLoginRequest.getIdentification(), userLoginRequest.getPassword());
+        return new UserLoginResponse(loginToken);
+    }
+
+
+    public static void main(String[] args) {
+        try {
+            throw new NullPointerException();
+        } catch (Exception e) {
+            System.out.println(e.getClass().getSimpleName());
+        }
+    }
+
 
 }
 
