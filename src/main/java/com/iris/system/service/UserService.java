@@ -13,6 +13,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 
@@ -133,10 +134,91 @@ public class UserService {
             this.userDAO.login(registeredUser.getId(), loginToken, new Date());
             return loginToken;
         } else {
-            throw new MessageServiceException(Status.PASSWORDS_NOT_MATCHED);
+            throw new MessageServiceException(Status.WRONG_PASSWORD);
         }
     }
 
+    public User authenticate(String loginToken) throws Exception {
+        User user = this.userDAO.selectOneByLoginToken(loginToken);
+        if (user == null) {
+            throw new MessageServiceException(Status.LOGIN_REQUIRED);
+        }
+
+        if (!user.getIsValid()) {
+            throw new MessageServiceException(Status.INACTIVATED_USER);
+        }
+
+        if (System.currentTimeMillis() - user.getLastLoginTime().getTime() > 7 * 24 * 60 * 60 * 1000) {
+            throw new MessageServiceException(Status.LOGIN_REQUIRED);
+        }
+
+        return user;
+    }
+
+    public void forgetPassword(String identification) throws Exception {
+        // 1. generate validation code
+        // 2. send email
+        // 3. return OK
+
+        String validationCode = RandomStringUtils.randomNumeric(6);
+
+        List<User> users = this.userDAO.selectByUsername(identification);
+
+        // if cannot find user by identification
+        if (users == null || users.size() == 0) {
+            throw new MessageServiceException(Status.USER_NOT_EXIST);
+        }
+
+        User user = users.get(0);
+
+        var userValidationCode = UserValidationCode.builder()
+                .userId(user.getId())
+                .validationCode(validationCode)
+                .build();
+
+        this.userValidationCodeDAO.insert(userValidationCode);
+
+        //2. send an email with the validation code to `email`. remind the user to reset the password
+        this.emailService.sendEmail(user.getEmail(), validationCode);
+
+    }
+
+    public void resetPassword(String username, String validationCode, String newPassword) throws Exception {
+        // 1. compare validation codes
+        // 2. delete validation code
+        // 3. update password
+        // 4. destroy login token
+        // get the userID by username
+        var users = this.userDAO.selectByUsername(username); // return a list
+        if (users == null || users.size() == 0) {
+            throw new MessageServiceException(Status.USER_NOT_EXIST);
+        }
+
+        var user = users.get(0);
+
+        var userValidationCode = this.userValidationCodeDAO.selectOneByUserId(user.getId());
+        if (userValidationCode == null) {
+            throw new MessageServiceException(Status.INTERNAL_SERVICE_ERROR);
+        }
+
+        if (!validationCode.equals(userValidationCode.getValidationCode())) {
+            throw new MessageServiceException(Status.VALIDATION_FAILED);
+        }
+
+        this.userValidationCodeDAO.delete(userValidationCode.getId());
+
+        // update password
+        this.userDAO.updatePassword(username, newPassword);
+
+        // get the login token by username and then delete login token
+        this.userDAO.updateLoginToken(username, null);
+
+
+    }
+
+    public User getUserById(int senderUserId) {
+        return null;
+    }
 }
 
 

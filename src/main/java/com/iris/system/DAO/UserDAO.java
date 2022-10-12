@@ -62,6 +62,20 @@ public interface UserDAO {
     @Update("UPDATE user SET is_valid = 1 WHERE id = #{userId}")
     void updateToValid(@Param("userId") int userId);
 
+    @Update("UPDATE user SET password = #{password} WHERE username=#{username}")
+    void updatePassword(@Param("username") String username, @Param("password") String password);
+
+
+    @Update("UPDATE user SET loginToken = #{loginToken} WHERE username=#{username}")
+    void updateLoginToken(@Param("username") String username, @Param("loginToken") String loginToken);
+
+
     @Update("UPDATE user SET login_token = #{loginToken}, last_login_time = #{lastLoginTime} WHERE id = #{userId}")
     void login(@Param("userId") int userId, @Param("loginToken") String loginToken, @Param("lastLoginTime") Date lastLoginTime);
+
+    @Select("SELECT * FROM user WHERE login_token = #{loginToken}")
+    User selectOneByLoginToken(@Param("loginToken") String loginToken);
+
+
+
 }

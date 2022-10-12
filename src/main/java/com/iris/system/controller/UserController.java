@@ -3,17 +3,13 @@ package com.iris.system.controller;
 
 import com.iris.system.enums.Status;
 import com.iris.system.exception.MessageServiceException;
-import com.iris.system.request.ActivateUserRequest;
-import com.iris.system.request.RegisterUserRequest;
-import com.iris.system.request.UserLoginRequest;
+import com.iris.system.model.User;
+import com.iris.system.request.*;
 import com.iris.system.response.CommonResponse;
 import com.iris.system.response.UserLoginResponse;
 import com.iris.system.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -58,14 +54,33 @@ public class UserController {
     }
 
 
-    public static void main(String[] args) {
-        try {
-            throw new NullPointerException();
-        } catch (Exception e) {
-            System.out.println(e.getClass().getSimpleName());
-        }
+    @PostMapping("/updateProfile")
+    public CommonResponse updateProfile(@RequestBody UpdateProfileRequest updateProfileRequest,
+                                        @RequestHeader String loginToken) throws Exception {
+        User user = this.userService.authenticate(loginToken);
+        return null;
+
     }
 
+    @PostMapping("/forgetPassword")
+    public CommonResponse forgetPassword(@RequestBody String identification) throws Exception {
+        this.userService.forgetPassword(identification);
+        return new CommonResponse(Status.OK);
+    }
+
+    @PostMapping("/resetPassword")
+    public CommonResponse resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) throws Exception { // username/email, password, repeatpassword, validationcode
+        // 1. compare validation codes
+        // 2. delete validation code
+        // 3. update password
+        // 4. destroy login token
+
+        this.userService.resetPassword(resetPasswordRequest.getUsername(),
+                resetPasswordRequest.getValidationCode(),
+                resetPasswordRequest.getNewPassword());
+        return new CommonResponse(Status.OK);
+
+    }
 
 }
 
