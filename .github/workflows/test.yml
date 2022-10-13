@@ -16,17 +16,12 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Set up MySQL
-        uses: mirromutth/mysql-action@v1.1
+      - name: Set up MySQL 5.7
+        uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql version: '8.0'
-          mysql database: 'messaging_test'
-          mysql root password: 'messaging_root_password'# Required if "mysql user" is empty, default is empty. The root superuser password
-          mysql user: 'messaging' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
-          mysql password: 'messaging2021' # Required if "mysql user" exists. The password for the "mysql user"
-      - run: sudo service mysql restart
-      - name: Prepare database
-        run: mysql -uroot -pmessaging_root_password < init.sql
+          mysql-version: '5.7'
+      - name: Prepare MySQL database
+        run: mysql -uroot -h127.0.0.1 < init.sql
       - name: Run tests with Maven
         run: mvn -B test
 
