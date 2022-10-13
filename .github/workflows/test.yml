@@ -24,6 +24,7 @@ jobs:
           mysql root password: 'messaging_root_password'# Required if "mysql user" is empty, default is empty. The root superuser password
           mysql user: 'messaging' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
           mysql password: 'messaging2021' # Required if "mysql user" exists. The password for the "mysql user"
+      - run: sudo service mysql restart
       - name: Prepare database
         run: mysql -uroot -pmessaging_root_password < init.sql
       - name: Run tests with Maven
