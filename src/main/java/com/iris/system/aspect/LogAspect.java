@@ -39,7 +39,8 @@ public class LogAspect {
             double latency = (double) endTime - startTime;
 
             log.info("{}.{} latency: {} ms, error: {}", className, methodName, endTime - startTime, error);
-//
+
+
             MetricDatum latencyMetric = new MetricDatum()
                     .withUnit(StandardUnit.Milliseconds)
                     .withValue(latency)
