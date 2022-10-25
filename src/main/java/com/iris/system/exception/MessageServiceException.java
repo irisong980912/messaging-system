@@ -6,6 +6,15 @@ import com.iris.system.enums.Status;
 // throws exception and halt the process
 // commonResponse is just telling a message
 // a customized exception that must be handled -> try and catch
+
+//Custom exceptions provide you the flexibility to add attributes and methods
+//        that are not part of a standard Java exception.
+//        These can store additional information,
+//        like an application-specific error code, or provide utility methods
+//        that can be used to handle or present the exception to a user.
+
+
+
 public class MessageServiceException extends Exception{
 
     private Status status;
