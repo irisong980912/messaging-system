@@ -35,7 +35,7 @@ public class ExceptionHandlers {
 
 
     }
-
+//
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseEntity<CommonResponse> handleException(Exception e) {
